@@ -21,6 +21,9 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y ignition-fortress
 
+# Install TMUX (Terminal Multiplexer)
+RUN apt-get install -y tmux 
+    
 # Source ROS 2 setup
 RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc
 RUN mkdir -p /root/estudos_ws/src
