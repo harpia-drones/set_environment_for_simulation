@@ -6,10 +6,8 @@ Bem-vindo ao repositório de estudos da **Equipe Harpia**. Este repositório cen
 
 ### 1. Clonar o repositório
 
-
     git clone git@github.com:harpia-drones/Estudos.git
     cd Estudos
-
 
 ### 2. Construir e iniciar o container
 
@@ -21,14 +19,39 @@ Use o Docker Compose para construir e iniciar o ambiente:
 
 Para acessar o terminal do container, utilize:
 
-    docker exec -it ros2-humble-gazebo /bin/bash
+    docker exec -it harpia bash
+
+### 4. Usando multiplos terminais
+
+Ao acessar o terminal bash do container, inicie uma nova seção do tmux, executando:
+
+    tmux
+
+Para validar as alterações do tmux (suporte ao mouse e navegação entre os terminais), execute:
+
+    tmux source-file ~/.tmux.conf 
+
+
+Para permitir o ROS2 identifique os packages existentes no volume /estudos_ws/src, execute:
+
+    colcon build 
+    source ~/.bashrc
+
+Faça isso toda vez que acessar um novo container. 
+
+> Comandos tmux:
+
+- **Dividir horizontalmente**: ctrl + b, %
+- **Dividir verticalmente**: ctrl + b, "
+- **Fechar um terminal**: exit
+- **Navegar entre os terminais de uma mesma sessão**: crtl + seta
 
 ## Estrutura do diretório
 
 ```
     Estudos/
     ├── estudos_ws/
-    │   └── src/
+    │   └── src/ 
     ├── compose.yaml
     └── Dockerfile
 ```
