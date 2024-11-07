@@ -1,11 +1,13 @@
 services:
   estudos_ws:
-    container_name: ros2-humble-gazebo
+    container_name: harpia
+    # if your computer uses MacOS, uncomment the line bellow
+    # platform: linux/arm64
     build:    
       context: .  #Dockerfile location
-    privileged: True  #Allows acess to host hardware
-    environment:  #Allows gui apps to run (Gazebo)
-      - DISPLAY=${DISPLAY}  
+    privileged: True  #Allows acess to host hardware 
+    environment:
+      - DISPLAY=:0 #Link the host display to container display
     volumes:  
       - ./estudos_ws/src:/root/estudos_ws/src #Links host and container files
       - /etc/localtime:/etc/localtime #Sets timezone 
