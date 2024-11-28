@@ -4,16 +4,8 @@ FROM osrf/ros:humble-desktop-full-jammy AS base
 # Shell to be used during the build process and the container's default
 SHELL ["/bin/bash", "-c"]
 
-# Set the environment variables
-ENV LANG=C.UTF-8 \
-    LC_ALL=C.UTF-8 \
-    ROS_DISTRO=humble \
-    DEBIAN_FRONTEND=noninteractive \
-    NO_AT_BRIDGE=1 \
-    PATH=$PATH:/root/.local/bin
-
 # Update and upgrade system
-RUN apt update && DEBIAN_FRONTEND=noninteractive apt upgrade -y
+RUN apt update && apt upgrade -y
 
 # Install Gazebo Fortress  
 RUN apt update && \
@@ -25,7 +17,8 @@ RUN apt update && \
 
 # Install command line tools
 RUN apt update && \
-    apt install -y tmux \
+    apt install -y \
+    tmux \
     unzip \
     gedit
 
@@ -48,6 +41,9 @@ RUN echo 'bind -n C-Up select-pane -U' >> /root/.tmux.conf
 
 # Move to the pane below
 RUN echo 'bind -n C-Down select-pane -D' >> /root/.tmux.conf
+
+# Avoid conflicts with modifier selection keys
+RUN echo 'setw -g mode-keys vi' >> /root/.tmux.conf
 
 ############################################## Terminal personalization Setup ##############################################
 
@@ -95,3 +91,4 @@ RUN apt install python3-colcon-common-extensions
 # Enable colcon auto complete
 RUN sudo chmod +x /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
     echo '/usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> /root/.bashrc
+
