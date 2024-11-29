@@ -13,7 +13,8 @@ services:
       - ROS_DISTRO = humble
       - DEBIAN_FRONTEND = noninteractive 
       - NO_AT_BRIDGE = 1 
-      - PATH = $PATH:/root/.local/bin
+      - PATH = $PATH:/root/.local/bin:/usr/local/bin
+
     volumes:  
       - ./estudos_ws/src:/root/estudos_ws/src #Links host and container files
       - /etc/localtime:/etc/localtime #Sets timezone 

@@ -20,7 +20,8 @@ RUN apt update && \
     apt install -y \
     tmux \
     unzip \
-    gedit
+    gedit \
+    wget 
 
 ############################################## Tmux Setup ##############################################
 
@@ -48,7 +49,12 @@ RUN echo 'setw -g mode-keys vi' >> /root/.tmux.conf
 ############################################## Terminal personalization Setup ##############################################
 
 # Install Oh My Posh
-RUN curl -s https://ohmyposh.dev/install.sh | bash -s 
+
+#RUN curl -s https://ohmyposh.dev/install.sh | bash -s 
+
+RUN wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh && \
+chmod +x /usr/local/bin/oh-my-posh
+
 
 # Install OhMyPosh theme
 RUN mkdir /root/.poshthemes 
@@ -92,3 +98,9 @@ RUN apt install python3-colcon-common-extensions
 RUN sudo chmod +x /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
     echo '/usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> /root/.bashrc
 
+############################################## Nav2 Setup ##############################################
+
+# Install Nav2
+RUN apt update && apt install -y ros-humble-navigation2 \
+    ros-humble-nav2-bringup \
+    ros-humble-turtlebot3*
