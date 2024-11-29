@@ -1,19 +1,19 @@
-# Base image for ROS 2 Humble Desktop Full on Jammy
-FROM osrf/ros:humble-desktop-full-jammy AS base
+# Base image for ROS 2 Jazzy Desktop Full on Jammy
+FROM osrf/ros:jazzy-desktop-full AS base
 
 # Shell to be used during the build process and the container's default
 SHELL ["/bin/bash", "-c"]
 
 # Update and upgrade system
-RUN apt update && apt upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
-# Install Gazebo Fortress  
-RUN apt update && \
-    apt-get install -y lsb-release gnupg curl && \
-    curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
-    apt-get update && \
-    apt-get install -y ignition-fortress
+# Install Gazebo Harmonic   
+RUN apt-get update && \
+    apt-get install -y curl lsb-release gnupg 
+
+RUN curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \ 
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+    apt-get update && apt-get install -y gz-harmonic
 
 # Install command line tools
 RUN apt update && \
@@ -53,7 +53,7 @@ RUN echo 'setw -g mode-keys vi' >> /root/.tmux.conf
 #RUN curl -s https://ohmyposh.dev/install.sh | bash -s 
 
 RUN wget https://github.com/JanDeDobbeleer/oh-my-posh/releases/latest/download/posh-linux-amd64 -O /usr/local/bin/oh-my-posh && \
-chmod +x /usr/local/bin/oh-my-posh
+    chmod +x /usr/local/bin/oh-my-posh
 
 
 # Install OhMyPosh theme
@@ -71,9 +71,6 @@ RUN echo 'eval "$(oh-my-posh init bash --config /root/.poshthemes/theme.json)"' 
 # Change terminal color scheme
 RUN echo "69" | bash -c "$(wget -qO- https://git.io/vQgMr)"
 
-# Remove unused apt files after installation processes 
-RUN rm -rf /var/lib/apt/lists/* 
-
 ############################################## ROS2 Setup ##############################################
 
 # Create the workspace
@@ -86,21 +83,35 @@ WORKDIR /root/estudos_ws/
 RUN colcon build
 
 # Enable ros2 features
-RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc
+RUN echo 'source /opt/ros/jazzy/setup.bash' >> /root/.bashrc
 
 # Enable estudos_ws features
 RUN echo 'source /root/estudos_ws/install/setup.bash' >> /root/.bashrc
+RUN  sh -c 'echo "deb [arch=amd64,arm64] http://repo.ros2.org/ubuntu/main `lsb_release -cs` main" > /etc/apt/sources.list.d/ros2-latest.list'
+RUN curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
 # Install colcon
-RUN apt install python3-colcon-common-extensions
+RUN apt-get update && apt-get install -y \
+    python3-colcon-common-extensions \
+    python3-argcomplete
+
+# Enable colcon cd
+RUN echo "source /usr/share/colcon_cd/function/colcon_cd.sh" >> ~/.bashrc && \
+    echo "export _colcon_cd_root=/opt/ros/jazzy/" >> ~/.bashrc
 
 # Enable colcon auto complete
-RUN sudo chmod +x /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
-    echo '/usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> /root/.bashrc
+# RUN chmod +x /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+# RUN echo '/usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash' >> /root/.bashrc
 
 ############################################## Nav2 Setup ##############################################
 
 # Install Nav2
-RUN apt update && apt install -y ros-humble-navigation2 \
-    ros-humble-nav2-bringup \
-    ros-humble-turtlebot3*
+RUN apt update && apt install -y ros-jazzy-navigation2 \
+    ros-jazzy-nav2-bringup \
+    ros-jazzy-nav2-minimal-tb*
+
+RUN echo 'export TURTLEBOT3_MODEL=waffle' >> /root/.bashrc && \
+    echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models' >> /root/.bashrc 
+
+# Remove unused apt files after installation processes 
+RUN rm -rf /var/lib/apt/lists/* 

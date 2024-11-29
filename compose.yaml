@@ -7,13 +7,13 @@ services:
       context: .  #Dockerfile location
     privileged: True  #Allows acess to host hardware 
     environment:
-      - DISPLAY = :0 #Link the host display to container display
-      - LANG = C.UTF-8 
-      - LC_ALL = C.UTF-8 
-      - ROS_DISTRO = humble
-      - DEBIAN_FRONTEND = noninteractive 
-      - NO_AT_BRIDGE = 1 
-      - PATH = $PATH:/root/.local/bin:/usr/local/bin
+      - DISPLAY=:0 #Link the host display to container display
+      - LANG=C.UTF-8 
+      - LC_ALL=C.UTF-8 
+      - ROS_DISTRO=jazzy
+      - DEBIAN_FRONTEND=noninteractive 
+      - NO_AT_BRIDGE=1 
+      - PATH=$PATH:/root/.local/bin:/usr/local/bin
 
     volumes:  
       - ./estudos_ws/src:/root/estudos_ws/src #Links host and container files
