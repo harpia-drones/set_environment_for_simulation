@@ -16,7 +16,7 @@ RUN \
     # Install command line tools (tmux, unzip, gedit, vim)
     apt-get install -y tmux unzip gedit vim
 
-############################################## Gazebo Harmonic Instalation ##############################################
+############################################## Gazebo Harmonic Setup ##############################################
 
 RUN \
     # Download and add the Gazebo package GPG key
@@ -81,9 +81,18 @@ WORKDIR /root/estudos_ws/
 # PS: Colcon instalation is using Debian packages
 
 RUN \
+    # Create the colcon-argcomplete missing file for jazzy \
+    mkdir -p /usr/share/colcon_argcomplete/hook && \
+    touch /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    chmod +x /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    echo 'if type register-python-argcomplete3 > /dev/null 2>&1; then' > /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    echo '  eval "$(register-python-argcomplete3 colcon)"' >> /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    echo 'elif type register-python-argcomplete > /dev/null 2>&1; then' >> /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    echo '  eval "$(register-python-argcomplete colcon)"' >> /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
+    echo 'fi' >> /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash; \
+    \
     # Enable ROS 2 features (source ROS setup.bash)
     echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc; \
-    source ~/.bashrc; \
     \
     # Add the ROS 2 repository to the apt sources list
     echo "deb [arch=$(dpkg --print-architecture)] http://repo.ros2.org/ubuntu/main $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list &&\
@@ -98,18 +107,14 @@ RUN \
     colcon build; \
     \
     # Enable estudos_ws features (source custom workspace setup.bash)
-    echo "source /root/estudos_ws/install/setup.bash" >> /root/.bashrc \
+    echo "source /root/estudos_ws/install/setup.bash" >> /root/.bashrc; \
     \
     # Ensure the global bashrc file is updated with colcon configurations
     echo "source /usr/share/colcon_cd/function/colcon_cd.sh" >> /root/.bashrc; \
     echo "export _colcon_cd_root=/opt/ros/jazzy/" >> /root/.bashrc; \
+    echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /root/.bashrc; \
     \
-    # echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /root/.bashrc; \
-    \
-    echo "alias bashrc='source /root/.bashrc'" >> /root/.bashrc; \
-    \
-    colcon build; \
-    source ~/.bashrc;
+    echo "alias bashrc='source /root/.bashrc'" >> /root/.bashrc;
     
 ############################################## Nav2 Setup ##############################################
 
