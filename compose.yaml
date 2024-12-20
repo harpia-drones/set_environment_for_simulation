@@ -4,20 +4,19 @@ services:
     # if your computer uses MacOS, uncomment the line bellow
     # platform: linux/arm64
     build:    
-      context: .  #Dockerfile location
-    privileged: True  #Allows acess to host hardware 
+      context: .                                    #Dockerfile location
+    privileged: True                                #Allows acess to host hardware 
     environment:
-      - DISPLAY=:0 #Link the host display to container display
+      - DISPLAY=:0                                  #Link the host display to container display
       - LANG=C.UTF-8 
       - LC_ALL=C.UTF-8 
       - ROS_DISTRO=jazzy
       - DEBIAN_FRONTEND=noninteractive 
       - NO_AT_BRIDGE=1 
       - PATH=$PATH:/root/.local/bin:/usr/local/bin
-
     volumes:  
-      - ./estudos_ws/src:/root/estudos_ws/src #Links host and container files
-      - /etc/localtime:/etc/localtime #Sets timezone 
-      - /tmp/.X11-unix:/tmp/.X11-unix #Allows gui apps to run (Gazebo)
-    network_mode: host #Share networks interface
-    tty: True #Keeps container running
+      - ./estudos_ws/src:/root/estudos_ws/src:rwx   #Links host and container files
+      - /etc/localtime:/etc/localtime:r             #Sets timezone 
+      - /tmp/.X11-unix:/tmp/.X11-unix:rx            #Allows gui apps to run (Gazebo)
+    network_mode: host                              #Share networks interface
+    tty: True                                       #Keeps container running

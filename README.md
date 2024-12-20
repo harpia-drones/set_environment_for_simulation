@@ -27,15 +27,10 @@ Ao acessar o terminal bash do container, inicie uma nova seção do tmux, execut
 
     tmux
 
-Para validar as alterações do tmux (suporte ao mouse e navegação entre os terminais), execute:
-
-    tmux source-file ~/.tmux.conf 
-
-
-Para permitir o ROS2 identifique os packages existentes no volume /estudos_ws/src, execute:
+Para permitir o ROS2 identifique os packages existentes no volume /estudos_ws/src, assim que entrar no container execute:
 
     colcon build 
-    source ~/.bashrc
+    bashrc
 
 Faça isso toda vez que acessar um novo container. 
 
@@ -52,6 +47,14 @@ Faça isso toda vez que acessar um novo container.
     Estudos/
     ├── estudos_ws/
     │   └── src/ 
+    │        ├── depencies/
+    │        │   ├── bringup/
+    │        │   │    ├── CMakeLists.txt.txt
+    │        │   │    └── package.xml.txt
+    │        │   └── interfaces/
+    │        │       ├── CMakeLists.txt.txt
+    │        │       └── package.xml.txt
+    │        └── Makefile
     ├── compose.yaml
     └── Dockerfile
 ```
