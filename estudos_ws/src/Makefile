@@ -42,6 +42,9 @@ endif
 	@cp dependencies/bringup/package.xml.txt $(name)_bringup/package.xml
 	@sed -i '4s/.*/  <name>$(name)_bringup<\/name>/' $(name)_bringup/package.xml
 
+# copy the template node
+	@cp dependencies/bringup/template.launch.py $(name)_bringup/launch/template.launch.py 
+
 # validate the changes
 	@cd .. && colcon build --packages-select $(name)_bringup
 	@cd .. && source ~/.bashrc

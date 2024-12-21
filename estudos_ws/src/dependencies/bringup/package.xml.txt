@@ -18,7 +18,6 @@
   <!-- <exec_depend>pkg_name_1</exec_depend> -->
   <!-- <exec_depend>pkh_name_2</exec_depend> -->
 
-  	
   <exec_depend>ros2launch</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
