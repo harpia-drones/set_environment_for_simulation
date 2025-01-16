@@ -14,23 +14,16 @@ RUN \
     apt-get update && apt-get upgrade -y; \
     \
     # Install command line tools (tmux, unzip, gedit, vim)
-    apt-get install -y tmux unzip gedit vim
-
-############################################## Gazebo Harmonic Setup ##############################################
-
-RUN \
-    # Download and add the Gazebo package GPG key
-    curl https://packages.osrfoundation.org/gazebo.gpg --output /usr/share/keyrings/pkgs-osrf-archive-keyring.gpg && \
+    apt-get install -y tmux unzip gedit vim; \
     \
-    # Add the Gazebo repository to apt sources
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/pkgs-osrf-archive-keyring.gpg] http://packages.osrfoundation.org/gazebo/ubuntu-stable $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/gazebo-stable.list > /dev/null && \
+############################################## Gazebo Harmonic Setup ##############################################
     \
     # Install Gazebo Harmonic package
-    apt-get update && apt-get install -y gz-harmonic
-
+    apt-get update && apt-get install -y ros-${ROS_DISTRO}-ros-gz; \
+    echo 'export QT_QPA_PLATFORM=xcb' >> /root/.bashrc; \ 
+    \
 ############################################## Tmux Setup ##############################################
-
-RUN \
+    \
     # Create the tmux config file
     touch /root/.tmux.conf && \
     \
@@ -50,37 +43,32 @@ RUN \
     echo 'bind -n C-Down select-pane -D' >> /root/.tmux.conf && \
     \
     # Avoid conflicts with modifier selection keys (set vi mode)
-    echo 'setw -g mode-keys vi' >> /root/.tmux.conf
-
+    echo 'setw -g mode-keys vi' >> /root/.tmux.conf; \
+    \
 ############################################## Terminal personalization Setup ##############################################
-
-RUN \
+    \
     # Download and install OhMyPosh
-    curl -s https://ohmyposh.dev/install.sh | bash -s; \
+    curl -s https://ohmyposh.dev/install.sh | bash -s &&\
     \
     # Create the directory for the OhMyPosh themes
-    mkdir /root/.poshthemes; \
+    mkdir /root/.poshthemes &&\
     \
     # Download the theme from GitHub using curl
-    curl -L "https://raw.githubusercontent.com/harpia-drones/Tema/refs/heads/main/theme.json" -o /root/.poshthemes/theme.json; \
+    curl -L "https://raw.githubusercontent.com/harpia-drones/Tema/refs/heads/main/theme.json" -o /root/.poshthemes/theme.json &&\
     \
     # Give the necessary read-write permissions to the theme file
-    chmod u+rw /root/.poshthemes/theme.json; \
+    chmod u+rw /root/.poshthemes/theme.json &&\
     \
     # Configure OhMyPosh to use the downloaded theme in Bash
-    echo 'eval "$(oh-my-posh init bash --config /root/.poshthemes/theme.json)"' >> /root/.bashrc; \
+    echo 'eval "$(oh-my-posh init bash --config /root/.poshthemes/theme.json)"' >> /root/.bashrc &&\
     \
     # Change the terminal color scheme using curl (replacing wget)
-    echo "69" | bash -c "$(curl -sSL https://git.io/vQgMr)"
-
+    echo "69" | bash -c "$(curl -sSL https://git.io/vQgMr)"; \
+    \
 ############################################## Colcon Setup #############################################
-
-# Define the estudos_ws directory as the work directory
-WORKDIR /root/estudos_ws/
-
-# PS: Colcon instalation is using Debian packages
-
-RUN \
+    \
+### ==> PS: Colcon instalation is using Debian packages
+    \
     # Create the colcon-argcomplete missing file for jazzy \
     mkdir -p /usr/share/colcon_argcomplete/hook && \
     touch /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash && \
@@ -104,7 +92,7 @@ RUN \
     apt update && apt install -y python3-colcon-common-extensions &&\
     \
     # Build the workspace
-    colcon build; \
+    cd /root/estudos_ws/ && colcon build; \
     \
     # Enable estudos_ws features (source custom workspace setup.bash)
     echo "source /root/estudos_ws/install/setup.bash" >> /root/.bashrc; \
@@ -114,20 +102,35 @@ RUN \
     echo "export _colcon_cd_root=/opt/ros/jazzy/" >> /root/.bashrc; \
     echo "source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash" >> /root/.bashrc; \
     \
-    echo "alias bashrc='source /root/.bashrc'" >> /root/.bashrc;
-    
+    # Create an alias to source the terminal
+    echo "" >> /root/.bashrc; \
+    \
+    # Modifying the colcon function to avoid it undestands fonders in dependency/ as packages 
+    echo "alias bashrc='source /root/.bashrc'" >> /root/.bashrc; \
+    echo "" >> /root/.bashrc; \
+    echo "colcon() {" >> /root/.bashrc; \
+    echo "    if [[ \"\$1\" == \"build\" ]]; then" >> /root/.bashrc; \
+    echo "        command colcon build --packages-ignore bringup description interfaces \"\${@:2}\"" >> /root/.bashrc; \
+    echo "    else" >> /root/.bashrc; \
+    echo "        command colcon \"\$@\"" >> /root/.bashrc; \
+    echo "    fi" >> /root/.bashrc; \
+    echo "}" >> /root/.bashrc; \
+    echo "" >> /root/.bashrc; \
+    \
 ############################################## Nav2 Setup ##############################################
-
-RUN \ 
-    # Update the package list and install Nav2 (navigation stack) and related packages
+    \ 
+    # EDITED
+    # Update the package list and install Nav2 (navigation stack) and related packages & urdf-tutorial pkg
     apt-get update && apt-get install -y \
-    ros-jazzy-navigation2 \
-    ros-jazzy-nav2-bringup \
-    ros-jazzy-nav2-minimal-tb*; \
+    \
+    ros-jazzy-urdf-tutorial; \
     \
     # Set environment variables for TurtleBot3 model and Gazebo model path in the global bashrc
-    echo 'export TURTLEBOT3_MODEL=waffle' >> /root/.bashrc && \
-    echo 'export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models' >> /root/.bashrc &&\
+    echo 'export TURTLEBOT3_MODEL=waffle' >> /root/.bashrc &&\
+    echo 'export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models' >> /root/.bashrc &&\
     \
     # Remove unused apt files after installation processes 
-    rm -rf /var/lib/apt/lists/* 
+    rm -rf /var/lib/apt/lists/*; 
+
+# Define the estudos_ws directory as the work directory
+WORKDIR /root/estudos_ws/
