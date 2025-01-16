@@ -1,8 +1,8 @@
 import rclpy 
 from rclpy.node import Node 
 
-class MyClassNode(Node):
-    def __init__(super):
+class MyClassNode(Node): # MODIFY NAME
+    def __init__(self):
         super().__init__("node_name") # MODIFY NAME
 
 
