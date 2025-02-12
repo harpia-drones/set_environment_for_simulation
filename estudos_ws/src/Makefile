@@ -2,30 +2,56 @@ SHELL := /bin/bash
 
 name :=
 urdf_path :=
+lang :=
 
-.PHONY: create create-bringup create-interfaces
+.PHONY: create create-bringup create-interfaces create-description
 
 #####################################################
 # create a ros2 package for nodes
 #####################################################
 
-create:
-
-# verify is the name was defined
+create: 
+# Verify if both 'name' and 'lang' were defined
 ifdef name
-# if name is defined, then create the package
-	@ros2 pkg create $(name) --build-type ament_python --dependencies rclpy --license Apache-2.0
+ifdef lang
+	@echo "===================================="
+	@echo "Package name: $(name)"
+	@echo "Language: $(lang)"
+	@echo "===================================="
 
-# validate the changes
-	@cd .. && colcon build --packages-select $(name) 
+# Check the value of 'lang'
+ifeq ($(lang),python)
+	@echo "Creating Python package..."
+	@ros2 pkg create $(name) --build-type ament_python --dependencies rclpy --license Apache-2.0
+else ifeq ($(lang),cpp)
+	@echo "Creating C++ package..."
+	@ros2 pkg create $(name) --build-type ament_cmake --dependencies rclcpp --license Apache-2.0
+# if lang is neither 'python' nor 'cpp', show an error message
+else
+	$(error 'lang' must be 'python' or 'cpp'. Example: lang:=python)
+endif
+
+# Validate the changes
+	@echo "Building the package..."
+	@cd .. && colcon build --packages-select $(name)
+	@echo "Sourcing the environment..."
 	@cd .. && source ~/.bashrc
+	@echo "Setting permissions..."
 	@chmod -R a+rwx $(name)
 
-# if name is not defined, show an error message
+# If lang is not defined show an error message
 else
-	@echo "The package name is missing."
-	@echo 'Example: make create name="my_pkg"'
-endif 
+	$(error 'lang' was not defined.)
+endif
+
+# if neither name nor lang was defined show an error message
+else ifndef lang
+	$(error Both 'name' and 'lang' were not defined.)
+
+# If name was not defined show an error message
+else
+	$(error 'name' was not defined.)
+endif
 
 #####################################################
 # create a ros2 package for bringup launch files
@@ -40,7 +66,8 @@ ifdef name
 
 # remove the unused directories
 	@cd $(name)_bringup && rm -rf src/ include/
-	@cd $(name)_bringup && mkdir launch  
+	@cd $(name)_bringup && mkdir launch config
+	@cd $(name)_bringup/config && mkdirgazebo rviz
 
 # copy and edit the CMakeList.txt file
 	@cp dependencies/bringup/CMakeLists.txt $(name)_bringup/CMakeLists.txt
@@ -50,8 +77,8 @@ ifdef name
 	@cp dependencies/bringup/package.xml $(name)_bringup/package.xml
 	@sed -i '4s/.*/  <name>$(name)_bringup<\/name>/' $(name)_bringup/package.xml
 
-# copy the template node
-	@cp dependencies/bringup/template.launch.py $(name)_bringup/launch/template.launch.py 
+# copy launch file to launch folder
+	@cd dependencies/bringup/launch/my_robot.launch.py $(name)_bringup/launch/$(name).launch.py
 
 # validate the changes
 	@cd .. && colcon build --packages-select $(name)_bringup
@@ -60,8 +87,7 @@ ifdef name
 
 # if name is not defined, show an error message
 else
-	@echo "The package name is missing."
-	@echo 'Example: make create-bringup name="my_pkg"'
+	$(error 'name' was not defined. Example: make create-bringup name=my_pkg)
 endif
 
 #####################################################
@@ -94,8 +120,7 @@ ifdef name
 
 # if name is not defined, show an error message
 else
-	@echo 'Example: make create-interfaces name="my_pkg"'
-	@echo "The package name is missing."
+	$(error 'name' was not defined. Example: make create-interfaces name=my_pkg)
 endif
 
 #####################################################
@@ -110,7 +135,8 @@ ifdef name
 
 # remove the unused directories
 	@cd $(name)_description && rm -rf src/ include/
-	@cd $(name)_description && mkdir urdf
+	@cd $(name)_description && mkdir urdf launch meshes config
+	@cd $(name)_description/config && rviz gazebo
 
 ifdef urdf_path
 # move the existing urdf to inside the directority n
@@ -125,6 +151,9 @@ endif
 	@cp dependencies/description/package.xml $(name)_description/package.xml
 	@sed -i '4s/.*/  <name>$(name)_description<\/name>/' $(name)_description/package.xml
 
+# copy launch file to launch folder
+	@cd dependencies/description/launch/display.launch.py $(name)_description/launch/display.launch.py
+
 # validate the changes
 	@cd .. && colcon build --packages-select $(name)_description 
 	@cd .. && source ~/.bashrc
@@ -132,6 +161,5 @@ endif
 
 # if name is not defined, show an error message
 else
-	@echo 'Example: make create-description name="my_pkg" urdf_path="/root/estudos_ws/src/my_robot.urdf" (optional)'
-	@echo "The package name is missing."
+	$(error 'name' was not defined. Example: make create-description name=my_pkg urdf_path="/root/estudos_ws/src/my_robot.urdf" (optional))
 endif

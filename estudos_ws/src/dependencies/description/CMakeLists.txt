@@ -9,7 +9,11 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY urdf
+  DIRECTORY 
+  urdf
+  meshes
+  config/rviz
+  config/gazebo
   DESTINATION share/${PROJECT_NAME}/
 )
 

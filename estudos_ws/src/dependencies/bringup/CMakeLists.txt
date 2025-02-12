@@ -10,7 +10,10 @@ find_package(ament_cmake REQUIRED)
 
 # install launch folder
 install(
-  DIRECTORY launch
+  DIRECTORY 
+  launch 
+  config/gazebo 
+  config/rviz
   DESTINATION share/${PROJECT_NAME}
 )
 

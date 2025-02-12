@@ -4,25 +4,30 @@ FROM osrf/ros:jazzy-desktop-full AS base
 # Shell to be used during the build process and the container's default
 SHELL ["/bin/bash", "-c"]
 
-############################################## Environment Setup ##############################################
+############################################## 
+#              Environment Setup 
+##############################################
 
 RUN \
     # Create the workspace
     mkdir -p /root/estudos_ws/src; \
     \
     # Update and upgrade the system
-    apt-get update && apt-get upgrade -y; \
+    apt-get update && apt-get upgrade -y && \
     \
     # Install command line tools (tmux, unzip, gedit, vim)
-    apt-get install -y tmux unzip gedit vim; \
+    apt-get install -y tmux unzip gedit vim && \
     \
-############################################## Gazebo Harmonic Setup ##############################################
+############################################## 
+#            Gazebo Harmonic Setup 
+##############################################
     \
     # Install Gazebo Harmonic package
-    apt-get update && apt-get install -y ros-${ROS_DISTRO}-ros-gz; \
-    echo 'export QT_QPA_PLATFORM=xcb' >> /root/.bashrc; \ 
+    apt-get install -y ros-${ROS_DISTRO}-ros-gz; \
     \
-############################################## Tmux Setup ##############################################
+############################################## 
+#                 Tmux Setup 
+##############################################
     \
     # Create the tmux config file
     touch /root/.tmux.conf && \
@@ -43,9 +48,11 @@ RUN \
     echo 'bind -n C-Down select-pane -D' >> /root/.tmux.conf && \
     \
     # Avoid conflicts with modifier selection keys (set vi mode)
-    echo 'setw -g mode-keys vi' >> /root/.tmux.conf; \
+    echo 'setw -g mode-keys vi' >> /root/.tmux.conf && \
     \
-############################################## Terminal personalization Setup ##############################################
+############################################## 
+#       Terminal personalization Setup 
+##############################################
     \
     # Download and install OhMyPosh
     curl -s https://ohmyposh.dev/install.sh | bash -s &&\
@@ -63,11 +70,11 @@ RUN \
     echo 'eval "$(oh-my-posh init bash --config /root/.poshthemes/theme.json)"' >> /root/.bashrc &&\
     \
     # Change the terminal color scheme using curl (replacing wget)
-    echo "69" | bash -c "$(curl -sSL https://git.io/vQgMr)"; \
+    echo "69" | bash -c "$(curl -sSL https://git.io/vQgMr)" && \
     \
-############################################## Colcon Setup #############################################
-    \
-### ==> PS: Colcon instalation is using Debian packages
+############################################## 
+#                 Colcon Setup 
+##############################################
     \
     # Create the colcon-argcomplete missing file for jazzy \
     mkdir -p /usr/share/colcon_argcomplete/hook && \
@@ -80,16 +87,16 @@ RUN \
     echo 'fi' >> /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash; \
     \
     # Enable ROS 2 features (source ROS setup.bash)
-    echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc; \
+    echo "source /opt/ros/jazzy/setup.bash" >> /root/.bashrc && \
     \
     # Add the ROS 2 repository to the apt sources list
-    echo "deb [arch=$(dpkg --print-architecture)] http://repo.ros2.org/ubuntu/main $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list &&\
+    echo "deb [arch=$(dpkg --print-architecture)] http://repo.ros2.org/ubuntu/main $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list && \
     \
     # Add the ROS GPG key to verify package integrity
-    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - &&\
+    curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | apt-key add - && \
     \
     # Install colcon and its common extensions
-    apt update && apt install -y python3-colcon-common-extensions &&\
+    apt update && apt install -y python3-colcon-common-extensions && \
     \
     # Build the workspace
     cd /root/estudos_ws/ && colcon build; \
@@ -115,22 +122,7 @@ RUN \
     echo "        command colcon \"\$@\"" >> /root/.bashrc; \
     echo "    fi" >> /root/.bashrc; \
     echo "}" >> /root/.bashrc; \
-    echo "" >> /root/.bashrc; \
-    \
-############################################## Nav2 Setup ##############################################
-    \ 
-    # EDITED
-    # Update the package list and install Nav2 (navigation stack) and related packages & urdf-tutorial pkg
-    apt-get update && apt-get install -y \
-    \
-    ros-jazzy-urdf-tutorial; \
-    \
-    # Set environment variables for TurtleBot3 model and Gazebo model path in the global bashrc
-    echo 'export TURTLEBOT3_MODEL=waffle' >> /root/.bashrc &&\
-    echo 'export GAZEBO_MODEL_PATH=\$GAZEBO_MODEL_PATH:/opt/ros/jazzy/share/turtlebot3_gazebo/models' >> /root/.bashrc &&\
-    \
-    # Remove unused apt files after installation processes 
-    rm -rf /var/lib/apt/lists/*; 
+    echo "" >> /root/.bashrc
 
 # Define the estudos_ws directory as the work directory
 WORKDIR /root/estudos_ws/
