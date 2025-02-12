@@ -18,26 +18,38 @@ ifdef lang
 	@echo "Package name: $(name)"
 	@echo "Language: $(lang)"
 	@echo "===================================="
+	@echo ""
 
 # Check the value of 'lang'
 ifeq ($(lang),python)
 	@echo "Creating Python package..."
+	@echo ""
 	@ros2 pkg create $(name) --build-type ament_python --dependencies rclpy --license Apache-2.0
+	@echo ""
 else ifeq ($(lang),cpp)
 	@echo "Creating C++ package..."
+	@echo ""
 	@ros2 pkg create $(name) --build-type ament_cmake --dependencies rclcpp --license Apache-2.0
+	@echo ""
 # if lang is neither 'python' nor 'cpp', show an error message
 else
 	$(error 'lang' must be 'python' or 'cpp'. Example: lang:=python)
 endif
 
 # Validate the changes
+	@echo "===================================="
 	@echo "Building the package..."
+	@echo " "
 	@cd .. && colcon build --packages-select $(name)
+	@echo "===================================="
+	@echo " "
 	@echo "Sourcing the environment..."
 	@cd .. && source ~/.bashrc
 	@echo "Setting permissions..."
 	@chmod -R a+rwx $(name)
+	@echo " "
+	@echo "Package created succesfully!"
+	@echo " "
 
 # If lang is not defined show an error message
 else
@@ -62,12 +74,20 @@ create-bringup:
 # verify is the name was defined
 ifdef name
 # if name is defined, then create the package
+	@echo "===================================="
+	@echo "Package name: $(name)_bringup"
+	@echo "===================================="
+	
+	@echo ""
+	@echo "Creating bringup package..."
+	@echo ""
 	@ros2 pkg create $(name)_bringup --license Apache-2.0
+	@echo ""
 
 # remove the unused directories
 	@cd $(name)_bringup && rm -rf src/ include/
 	@cd $(name)_bringup && mkdir launch config
-	@cd $(name)_bringup/config && mkdirgazebo rviz
+	@cd $(name)_bringup/config && mkdir gazebo rviz
 
 # copy and edit the CMakeList.txt file
 	@cp dependencies/bringup/CMakeLists.txt $(name)_bringup/CMakeLists.txt
@@ -78,12 +98,22 @@ ifdef name
 	@sed -i '4s/.*/  <name>$(name)_bringup<\/name>/' $(name)_bringup/package.xml
 
 # copy launch file to launch folder
-	@cd dependencies/bringup/launch/my_robot.launch.py $(name)_bringup/launch/$(name).launch.py
+	@cp dependencies/bringup/launch/my_robot.launch.py $(name)_bringup/launch/$(name).launch.py
 
 # validate the changes
+	@echo "===================================="
+	@echo "Building the package..."
+	@echo " "
 	@cd .. && colcon build --packages-select $(name)_bringup
+	@echo "===================================="
+	@echo " "
+	@echo "Sourcing the environment..."
 	@cd .. && source ~/.bashrc
-	@chmod -R a+rwx $(name)_bringup/ 
+	@echo "Setting permissions..."
+	@chmod -R a+rwx $(name)_bringup/
+	@echo " "
+	@echo "Package created succesfully!"
+	@echo " " 
 
 # if name is not defined, show an error message
 else
@@ -99,7 +129,15 @@ create-interfaces:
 # verify is the name was defined
 ifdef name
 # if name is defined, then create the package
+	@echo "===================================="
+	@echo "Package name: $(name)_interfaces"
+	@echo "===================================="
+	
+	@echo ""
+	@echo "Creating interface package..."
+	@echo ""
 	@ros2 pkg create $(name)_interfaces --license Apache-2.0
+	@echo ""
 
 # remove the unused directories
 	@cd $(name)_interfaces && rm -rf src/ include/
@@ -114,9 +152,19 @@ ifdef name
 	@sed -i '4s/.*/  <name>$(name)_interfaces<\/name>/' $(name)_interfaces/package.xml
 
 # validate the changes
-	@cd .. && colcon build --packages-select $(name)_interfaces 
+	@echo "===================================="
+	@echo "Building the package..."
+	@echo " "
+	@cd .. && colcon build --packages-select $(name)_interfaces
+	@echo "===================================="
+	@echo " "
+	@echo "Sourcing the environment..."
 	@cd .. && source ~/.bashrc
+	@echo "Setting permissions..."
 	@chmod -R a+rwx $(name)_interfaces/
+	@echo " "
+	@echo "Package created succesfully!"
+	@echo " "
 
 # if name is not defined, show an error message
 else
@@ -131,12 +179,20 @@ create-description:
 # verify is the name was defined
 ifdef name
 # if name is defined, then create the package
+	@echo "===================================="
+	@echo "Package name: $(name)_description"
+	@echo "===================================="
+	
+	@echo ""
+	@echo "Creating description package..."
+	@echo ""
 	@ros2 pkg create $(name)_description --license Apache-2.0
+	@echo ""
 
 # remove the unused directories
 	@cd $(name)_description && rm -rf src/ include/
 	@cd $(name)_description && mkdir urdf launch meshes config
-	@cd $(name)_description/config && rviz gazebo
+	@cd $(name)_description/config && mkdir rviz gazebo
 
 ifdef urdf_path
 # move the existing urdf to inside the directority n
@@ -152,12 +208,22 @@ endif
 	@sed -i '4s/.*/  <name>$(name)_description<\/name>/' $(name)_description/package.xml
 
 # copy launch file to launch folder
-	@cd dependencies/description/launch/display.launch.py $(name)_description/launch/display.launch.py
+	@cp dependencies/description/launch/display.launch.py $(name)_description/launch/display.launch.py
 
 # validate the changes
-	@cd .. && colcon build --packages-select $(name)_description 
+	@echo "===================================="
+	@echo "Building the package..."
+	@echo " "
+	@cd .. && colcon build --packages-select $(name)_description
+	@echo "===================================="
+	@echo " "
+	@echo "Sourcing the environment..."
 	@cd .. && source ~/.bashrc
+	@echo "Setting permissions..."
 	@chmod -R a+rwx $(name)_description/
+	@echo " "
+	@echo "Package created succesfully!"
+	@echo " "
 
 # if name is not defined, show an error message
 else

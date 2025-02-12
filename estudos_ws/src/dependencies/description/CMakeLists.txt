@@ -12,6 +12,7 @@ install(
   DIRECTORY 
   urdf
   meshes
+  launch
   config/rviz
   config/gazebo
   DESTINATION share/${PROJECT_NAME}/
