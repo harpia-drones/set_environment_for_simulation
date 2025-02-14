@@ -26,7 +26,7 @@ echo "Installing PX4..."
 echo "==================================================================" 
 cd /home/harpia/ && \
 git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
-bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh && \
+bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh --no-sim-tools && \
 cd /home/harpia/PX4-Autopilot/ && \
 make px4_sitl
 
