@@ -41,6 +41,7 @@ echo "Installing Micro-XRCE-DDS-Agent..."
 echo "==================================================================" 
 cd /home/harpia/ && \
 git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git && \
+curl -L "https://raw.githubusercontent.com/harpia-drones/set_environment_for_simulation/refs/heads/main/FindTinyXML2.cmake" -o /home/harpia/Micro-XRCE-DDS-Agent/cmake/modules/FindTinyXML2.cmake && \
 cd /home/harpia/Micro-XRCE-DDS-Agent && \
 mkdir build && \
 cd build && \
