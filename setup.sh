@@ -5,41 +5,53 @@ echo "Iniciando setup.sh..."
 echo "=================================================================="
 
 # Atualizar e fazer upgrade do sistema
+echo "=================================================================="
 echo "Atualizando o sistema..."
-apt-get upgrade -y && \
-apt-get update && \
+echo "=================================================================="
+apt-get upgrade -y
+apt-get update
 
 # Criar um ambiente virtual Python
-echo "Criando ambiente virtual..."
-apt-get install -y python3-venv && \
-cd /root/ && python3 -m venv harpia && \
-source harpia/bin/activate
+echo "=================================================================="
+echo "Criando um ambiente virtual python..."
+echo "==================================================================" 
+apt-get install -y python3-venv 
+cd /root/ && python3 -m venv harpia 
+source harpia/bin/activate 
 
 # Instalar a toolchain de desenvolvimento do PX4 para usar o simulador
-echo "Instalando PX4 Autopilot..."
-cd /root/ && git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
-bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh
+echo "=================================================================="
+echo "Instalando PX4..."
+echo "==================================================================" 
+cd /root/ && git clone https://github.com/PX4/PX4-Autopilot.git --recursive 
+bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh 
 
 # Instalar algumas dependências para ROS
+echo "=================================================================="
 echo "Instalando dependências do ROS..."
-pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark && \
-apt-get install -y ros-dev-tools
+echo "=================================================================="
+pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark 
+apt-get install -y ros-dev-tools 
 
 # Instalar o XRCE-DDS Agent
+echo "=================================================================="
 echo "Instalando Micro-XRCE-DDS-Agent..."
-cd /root/ && git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git && \
-cd /root/Micro-XRCE-DDS-Agent && \
-mkdir build && \
-cd build && \
-cmake .. && \
-make && \
-make install && \
-ldconfig /usr/local/lib/
+echo "==================================================================" 
+cd /root/ && git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git 
+cd /root/Micro-XRCE-DDS-Agent 
+mkdir build 
+cd build 
+cmake .. 
+make 
+make install 
+ldconfig /usr/local/lib/ 
 
 # Clonar os repositórios necessários
+echo "=================================================================="
 echo "Clonando repositórios..."
-cd /root/estudos_ws/src/ && \
-git clone https://github.com/PX4/px4_msgs.git && \
+echo "==================================================================" 
+cd /root/estudos_ws/src/ 
+git clone https://github.com/PX4/px4_msgs.git 
 git clone https://github.com/PX4/px4_ros_com.git
 
 # Função para tentar rodar o colcon build
