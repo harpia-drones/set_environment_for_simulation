@@ -8,14 +8,14 @@ echo "=================================================================="
 echo "=================================================================="
 echo "Updating the system..."
 echo "=================================================================="
-sudo apt-get upgrade -y && \
-sudo apt-get update
+apt-get upgrade -y && \
+apt-get update
 
 # Create a python virtual environment
 echo "=================================================================="
 echo "Creating a python virtual environment..."
 echo "==================================================================" 
-sudo apt-get install -y python3-venv && \
+apt-get install -y python3-venv && \
 cd /home/harpia/ && \
 python3 -m venv harpia_venv && \
 source harpia_venv/bin/activate 
@@ -27,7 +27,7 @@ echo "=================================================================="
 cd /home/harpia/ && \
 git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
 bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh && \
-cd /home/harpia/PX4-Autopilot/ && \
+cd /home/harpia/PX4-Autopilot && \
 make px4_sitl
 
 # Install some dependencies for ROS2
@@ -35,7 +35,7 @@ echo "=================================================================="
 echo "Installing some dependencies for ROS2..."
 echo "=================================================================="
 pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark && \
-sudo apt-get install -y ros-dev-tools 
+apt-get install -y ros-dev-tools 
 
 # Install the XRCE-DDS Agent
 echo "=================================================================="
