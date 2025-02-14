@@ -26,9 +26,7 @@ echo "Installing PX4..."
 echo "==================================================================" 
 cd /home/harpia/ && \
 git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
-bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh && \
-cd /home/harpia/PX4-Autopilot && \
-make px4_sitl
+bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh
 
 # Install some dependencies for ROS2
 echo "=================================================================="
