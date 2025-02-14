@@ -10,7 +10,6 @@ echo "=================================================================="
 # If the flag file does not exist, run the script and create the flag
 if [ ! -f "$FLAG_FILE" ]; then
     echo "Running setup.sh for the first time..."
-    chmod -R +x /home/harpia/setup/ && \
     bash /home/harpia/setup/setup.sh
     if [ $? -eq 0 ]; then
         echo "setup.sh successfully completed."

@@ -8,14 +8,14 @@ echo "=================================================================="
 echo "=================================================================="
 echo "Updating the system..."
 echo "=================================================================="
-apt-get upgrade -y && \
-apt-get update
+sudo apt-get upgrade -y && \
+sudo apt-get update
 
 # Create a python virtual environment
 echo "=================================================================="
 echo "Creating a python virtual environment..."
 echo "==================================================================" 
-apt-get install -y python3-venv && \
+sudo apt-get install -y python3-venv && \
 cd /home/harpia/ && \
 python3 -m venv harpia_venv && \
 source harpia_venv/bin/activate 
@@ -35,7 +35,7 @@ echo "=================================================================="
 echo "Installing some dependencies for ROS2..."
 echo "=================================================================="
 pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark && \
-apt-get install -y ros-dev-tools 
+sudo apt-get install -y ros-dev-tools 
 
 # Install the XRCE-DDS Agent
 echo "=================================================================="
