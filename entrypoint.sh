@@ -5,8 +5,8 @@ FLAG_FILE='/root/.setup_done'
 
 # Se o arquivo de flag não existir, executa o script e cria o flag
 if [ ! -f "$FLAG_FILE" ]; then
-    chmod -R +x /root/estudos_ws/src/dependencies && \
-    /root/estudos_ws/src/dependencies/setup/setup.sh
+    chmod -R +x /root/setup/ && \
+    /root/setup/setup.sh
     touch "$FLAG_FILE"
 
 else
