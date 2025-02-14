@@ -1,77 +1,82 @@
 #!/bin/bash
 
 echo "=================================================================="
-echo "Iniciando setup.sh..."
+echo "Starting setup.sh..."
 echo "=================================================================="
 
-# Atualizar e fazer upgrade do sistema
+# Update and upgrade the system
 echo "=================================================================="
-echo "Atualizando o sistema..."
+echo "Updating the system..."
 echo "=================================================================="
-apt-get upgrade -y
+apt-get upgrade -y && \
 apt-get update
 
-# Criar um ambiente virtual Python
+# Create a python virtual environment
 echo "=================================================================="
-echo "Criando um ambiente virtual python..."
+echo "Creating a python virtual environment..."
 echo "==================================================================" 
-apt-get install -y python3-venv 
-cd /root/ && python3 -m venv harpia 
-source harpia/bin/activate 
+apt-get install -y python3-venv && \
+cd /home/harpia/ && \
+python3 -m venv harpia_venv && \
+source harpia_venv/bin/activate 
 
-# Instalar a toolchain de desenvolvimento do PX4 para usar o simulador
+# Install the PX4 development toolchain to use the simulator
 echo "=================================================================="
-echo "Instalando PX4..."
+echo "Installing PX4..."
 echo "==================================================================" 
-cd /root/ && git clone https://github.com/PX4/PX4-Autopilot.git --recursive 
-bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh 
+cd /home/harpia/ && \
+git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
+bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh && \
+cd /home/harpia/PX4-Autopilot/ && \
+make px4_sitl
 
-# Instalar algumas dependências para ROS
+# Install some dependencies for ROS2
 echo "=================================================================="
-echo "Instalando dependências do ROS..."
+echo "Installing some dependencies for ROS2..."
 echo "=================================================================="
-pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark 
+pip3 install -U empy pyros-genmsg setuptools catkin_pkg lark && \
 apt-get install -y ros-dev-tools 
 
-# Instalar o XRCE-DDS Agent
+# Install the XRCE-DDS Agent
 echo "=================================================================="
-echo "Instalando Micro-XRCE-DDS-Agent..."
+echo "Installing Micro-XRCE-DDS-Agent..."
 echo "==================================================================" 
-cd /root/ && git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git 
-cd /root/Micro-XRCE-DDS-Agent 
-mkdir build 
-cd build 
-cmake .. 
-make 
-make install 
-ldconfig /usr/local/lib/ 
+cd /home/harpia/ && \
+git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git && \
+cd /home/harpia/Micro-XRCE-DDS-Agent && \
+mkdir build && \
+cd build && \
+cmake .. && \
+make && \
+make install && \
+ldconfig /usr/local/lib/ && \
 
-# Clonar os repositórios necessários
+# Clone the required repositories
 echo "=================================================================="
-echo "Clonando repositórios..."
+echo "Cloning repositories..."
 echo "==================================================================" 
-cd /root/estudos_ws/src/ 
-git clone https://github.com/PX4/px4_msgs.git 
+cd /home/harpia/estudos_ws/src/ && \
+git clone https://github.com/PX4/px4_msgs.git && \
 git clone https://github.com/PX4/px4_ros_com.git
 
-# Função para tentar rodar o colcon build
+# Function to try to run colcon build
 build_with_retry() {
     while true; do
-        echo "Executando colcon build..."
-        cd /root/estudos_ws/ && colcon build --packages-ignore bringup description interfaces
-        if [ $? -eq 0 ]; then  # Verifica se o comando anterior foi bem-sucedido
-            echo "colcon build executado com sucesso!"
-            break  # Sai do loop se o comando for bem-sucedido
+        echo "Running colcon build..."
+        cd /home/harpia/estudos_ws/ && colcon build --packages-ignore bringup description interfaces
+        if [ $? -eq 0 ]; then  # Checks whether the previous command was successful
+            echo "colcon build succesfully completed!"
+            break  # Exit the loop if the command is successful
         else
-            echo "colcon build falhou. Tentando novamente..."
-            sleep 2  # Espera 2 segundos antes de tentar novamente (opcional)
+            echo "colcon build fails. Trying again..."
+            sleep 2  # Wait 2 seconds before trying again (opcional)
         fi
     done
 }
 
-# Chama a função
+# Call the function
 build_with_retry
 
 echo "=================================================================="
-echo "setup.sh concluído com sucesso!"
+echo "setup.sh succesfully completed!"
 echo "=================================================================="

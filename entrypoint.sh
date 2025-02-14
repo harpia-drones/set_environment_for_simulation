@@ -1,30 +1,30 @@
 #!/bin/bash
 
-# Caminho para um arquivo de flag indicando que o script já rodou
-FLAG_FILE='/root/setup/.setup_done'
+# Path to a flag file indicating that the script has already run
+FLAG_FILE='/home/harpia/setup/.setup_done'
 
 echo "=================================================================="
-echo "Iniciando entrypoint.sh..."
+echo "Starting entrypoint.sh..."
 echo "=================================================================="
 
-# Se o arquivo de flag não existir, executa o script e cria o flag
+# If the flag file does not exist, run the script and create the flag
 if [ ! -f "$FLAG_FILE" ]; then
-    echo "Executando setup.sh pela primeira vez..."
-    chmod -R +x /root/setup/ && \
-    /root/setup/setup.sh
+    echo "Running setup.sh for the first time..."
+    chmod -R +x /home/harpia/setup/ && \
+    bash /home/harpia/setup/setup.sh
     if [ $? -eq 0 ]; then
-        echo "setup.sh concluído com sucesso."
+        echo "setup.sh successfully completed."
         touch "$FLAG_FILE"
     else
-        echo "Erro ao executar setup.sh."
+        echo "Error when running setup.sh."
         exit 1
     fi
 else
     echo "=================================================================="
-    echo "Environment setup concluído com sucesso!"
+    echo "Environment setup successfully completed!"
     echo "=================================================================="
 fi
 
 echo "=================================================================="
-echo "Finalizando entrypoint.sh."
+echo "Finishing entrypoint.sh."
 echo "=================================================================="
