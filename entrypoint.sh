@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Path to a flag file indicating that the script has already run
-FLAG_FILE='/root/setup/.setup_done'
+ROOT_FOLDER="root"
+FLAG_FILE="/$ROOT_FOLDER/setup/.setup_done"
 
 echo "=================================================================="
 echo "Starting entrypoint.sh..."
@@ -10,7 +11,7 @@ echo "=================================================================="
 # If the flag file does not exist, run the script and create the flag
 if [ ! -f "$FLAG_FILE" ]; then
     echo "Running setup.sh for the first time..."
-    bash /root/setup/setup.sh
+    bash "/$ROOT_FOLDER/setup/setup.sh"
     if [ $? -eq 0 ]; then
         echo "setup.sh successfully completed."
         touch "$FLAG_FILE"
