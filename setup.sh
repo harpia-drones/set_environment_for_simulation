@@ -16,17 +16,18 @@ echo "=================================================================="
 echo "Creating a python virtual environment..."
 echo "==================================================================" 
 apt-get install -y python3-venv && \
-cd /home/harpia/ && \
+cd /root/ && \
 python3 -m venv harpia_venv && \
-source harpia_venv/bin/activate 
+echo "source /root/harpia_venv/bin/activate" >> /root/.bashrc
+source /root/harpia_venv/bin/activate
 
 # Install the PX4 development toolchain to use the simulator
 echo "=================================================================="
 echo "Installing PX4..."
 echo "==================================================================" 
-cd /home/harpia/ && \
+cd /root/ && \
 git clone https://github.com/PX4/PX4-Autopilot.git --recursive && \
-bash /home/harpia/PX4-Autopilot/Tools/setup/ubuntu.sh
+bash /root/PX4-Autopilot/Tools/setup/ubuntu.sh
 
 # Install some dependencies for ROS2
 echo "=================================================================="
@@ -39,43 +40,21 @@ apt-get install -y ros-dev-tools
 echo "=================================================================="
 echo "Installing Micro-XRCE-DDS-Agent..."
 echo "==================================================================" 
-cd /home/harpia/ && \
+cd /root/ && \
 git clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git && \
-curl -L "https://raw.githubusercontent.com/harpia-drones/set_environment_for_simulation/refs/heads/main/FindTinyXML2.cmake" -o /home/harpia/Micro-XRCE-DDS-Agent/cmake/modules/FindTinyXML2.cmake && \
-cd /home/harpia/Micro-XRCE-DDS-Agent && \
+curl -L "https://raw.githubusercontent.com/harpia-drones/set_environment_for_simulation/refs/heads/main/FindTinyXML2.cmake" -o /root/Micro-XRCE-DDS-Agent/cmake/modules/FindTinyXML2.cmake && \
+cd /root/Micro-XRCE-DDS-Agent && \
 mkdir build && \
 cd build && \
 cmake .. && \
 make && \
 make install && \
-ldconfig /usr/local/lib/ && \
+ldconfig /usr/local/lib/
 
 # Clone the required repositories
 echo "=================================================================="
 echo "Cloning repositories..."
 echo "==================================================================" 
-cd /home/harpia/estudos_ws/src/ && \
+cd /root/estudos_ws/src/ && \
 git clone https://github.com/PX4/px4_msgs.git && \
 git clone https://github.com/PX4/px4_ros_com.git
-
-# Function to try to run colcon build
-build_with_retry() {
-    while true; do
-        echo "Running colcon build..."
-        cd /home/harpia/estudos_ws/ && colcon build --packages-ignore bringup description interfaces
-        if [ $? -eq 0 ]; then  # Checks whether the previous command was successful
-            echo "colcon build succesfully completed!"
-            break  # Exit the loop if the command is successful
-        else
-            echo "colcon build fails. Trying again..."
-            sleep 2  # Wait 2 seconds before trying again (opcional)
-        fi
-    done
-}
-
-# Call the function
-build_with_retry
-
-echo "=================================================================="
-echo "setup.sh succesfully completed!"
-echo "=================================================================="
