@@ -1,7 +1,14 @@
 #!/bin/bash
 
+# Verify if the script was executed with sudo
+if [ -n "$SUDO_USER" ]; then
+    HOME="/home/$SUDO_USER"
+else
+    HOME="$HOME"
+fi
+
 # Path to a flag file indicating that the script has already run
-FLAG_FILE="/$HOME/setup/.setup_done"
+FLAG_FILE="$HOME/setup/.setup_done"
 
 echo "=================================================================="
 echo "Starting entrypoint.sh..."
@@ -10,7 +17,7 @@ echo "=================================================================="
 # If the flag file does not exist, run the script and create the flag
 if [ ! -f "$FLAG_FILE" ]; then
     echo "Running setup.sh for the first time..."
-    bash "/$HOME/setup/setup.sh"
+    bash "$HOME/setup/setup.sh"
     if [ $? -eq 0 ]; then
         echo "setup.sh successfully completed."
         touch "$FLAG_FILE"
